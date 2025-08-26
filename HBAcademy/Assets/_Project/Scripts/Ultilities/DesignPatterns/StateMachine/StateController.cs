@@ -10,7 +10,7 @@ namespace Vox.Ultilities.StateMachine
     /// Base class for a state controller that manages different states of object.
     /// </summary>
     /// <typeparam name="EState"> Object Enum. </typeparam>
-    public abstract class StateController<EState> : MonoBehaviour where EState : Enum
+    public abstract class StateController<EState, C> : MonoBehaviour where EState : Enum
     {
         #region --- Methods ---
 
@@ -23,7 +23,7 @@ namespace Vox.Ultilities.StateMachine
         {
             EState nextStateKey = _currentState.GetNextState();
 
-            if (!_isTransistioning && !nextStateKey.Equals(_currentState.StateKey))
+            if (!_isTransistioning && nextStateKey.Equals(_currentState.StateKey))
             {
                 _currentState.UpdateState();
             } 
@@ -65,6 +65,7 @@ namespace Vox.Ultilities.StateMachine
         protected BaseState<EState> _currentState;
 
         protected bool _isTransistioning = false;
+        protected string _currentAnimation;
 
         #endregion
     }

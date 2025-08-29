@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using Vox.Featrures.SuperState;
 using Vox.Ultilities.StateMachine;
 
@@ -9,13 +10,12 @@ namespace Vox.Features.SubState
 {
     public class PlayerIdleState : BaseState<PlayerController, PlayerStateFactory>
     {
-        public PlayerIdleState(PlayerController ctrl, PlayerStateFactory stateFac, PlayerData data) : base(ctrl, stateFac, data)
-        {
-            EnterState();
-        }
+        public PlayerIdleState(PlayerController ctrl, PlayerStateFactory stateFac, PlayerData data) : base(ctrl, stateFac, data) { }
 
         public override void EnterState()
         {
+            base.EnterState();
+
             Debug.Log("Idle");
             Ctrl.anim.SetTrigger("Idle");
             Ctrl.anim.SetBool("isMove", false);
@@ -23,6 +23,8 @@ namespace Vox.Features.SubState
 
         public override void ExitState()
         {
+            base.ExitState();
+
             if (CurrentSubState != null)
                 CurrentSubState.ExitState();
 
@@ -31,8 +33,10 @@ namespace Vox.Features.SubState
 
         protected override void CheckSwitchState()
         {
-            if (Ctrl.XInput)
+            if (Ctrl.inputHandler.NormalizedInputX != 0)
                 SwitchState(Fac.RunState());
+            else if (Ctrl.inputHandler.JumpInput)
+                SwitchState(Fac.JumpState());
         }
 
         protected override void UpdateState()
@@ -45,6 +49,6 @@ namespace Vox.Features.SubState
             }
         }
 
-        private float _acceleration = 0.4f;
+        [SerializeField] private float _acceleration = 0.4f;
     }
 }

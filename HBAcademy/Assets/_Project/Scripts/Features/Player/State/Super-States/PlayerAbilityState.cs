@@ -10,29 +10,29 @@ namespace Vox.Features.SuperState
         public PlayerAbilityState(PlayerController ctrl, PlayerStateFactory stateFac, PlayerData data) : base(ctrl, stateFac, data)
         {
             IsRootState = true;
-
-            InitializeSubState();
-            EnterState();
-        }
-
-        protected override void InitializeSubState()
-        {
-            
         }
 
         public override void EnterState()
         {
-
+            base.EnterState();
         }
 
         public override void ExitState()
         {
-
+            base.ExitState();
         }
 
         protected override void CheckSwitchState()
         {
-
+            if (Ctrl.IsAbilityDone)
+            {
+                if (Ctrl.Grounded) //&& Ctrl.inputHandler.NormalizedInputY < 0.01f)
+                    SwitchState(Fac.IdleState());
+            }
+            //} else
+            //{
+            //    SwitchState(Fac.InAirState());
+            //}
         }
 
         protected override void UpdateState()

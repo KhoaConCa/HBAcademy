@@ -13,7 +13,7 @@ namespace Vox.Ultilities.StateMachine
             _factory = fac;
             _data = data;
 
-            SetSuperState(this);
+            //SetSuperState(this);
         }
 
         #region --- Methods ---
@@ -27,11 +27,18 @@ namespace Vox.Ultilities.StateMachine
 
         protected virtual void CheckConditions() { }
 
-        public abstract void EnterState();
+        public virtual void EnterState()
+        {
+            isAnimationFinished = false;
+            isExitingState = false;
+        }
 
         protected abstract void UpdateState();
 
-        public abstract void ExitState();
+        public virtual void ExitState()
+        {
+            isExitingState = true;
+        }
 
         protected abstract void CheckSwitchState();
 
@@ -53,6 +60,8 @@ namespace Vox.Ultilities.StateMachine
                 _controller.CurrentState = newState;
             else if (_currentSuperState != null)
                 _currentSuperState.SetSubState(newState);
+
+            newState.EnterState();
         }
 
         protected void SetSuperState(BaseState<C, F> newSuperState)
@@ -63,8 +72,12 @@ namespace Vox.Ultilities.StateMachine
         protected void SetSubState(BaseState<C, F> newSubState)
         {
             _currentSubState = newSubState;
-            _currentSubState.SetSuperState(this);
+            newSubState.SetSuperState(this);
+
+            //newSubState.EnterState();
         }
+
+        public virtual void AnimationFinishTrigger() => isAnimationFinished = true;
 
         #endregion
 
@@ -89,6 +102,9 @@ namespace Vox.Ultilities.StateMachine
 
         private BaseState<C, F> _currentSuperState;
         private BaseState<C, F> _currentSubState;
+
+        protected bool isExitingState;
+        protected bool isAnimationFinished;
 
         #endregion
     }

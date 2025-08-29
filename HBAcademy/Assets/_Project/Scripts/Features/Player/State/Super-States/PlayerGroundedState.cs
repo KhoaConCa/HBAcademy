@@ -13,7 +13,7 @@ namespace Vox.Featrures.SuperState
             IsRootState = true;
 
             InitializeSubState();
-            EnterState();
+            //EnterState();
         }
 
         protected override void InitializeSubState()
@@ -24,11 +24,14 @@ namespace Vox.Featrures.SuperState
         public override void EnterState()
         {
             Debug.Log("Grounded");
-            CurrentSubState.EnterState();
+            //CurrentSubState.EnterState();
+            base.EnterState();
         }
 
         public override void ExitState()
         {
+            base.ExitState();
+
             if (CurrentSubState != null)
                 CurrentSubState.ExitState();
         }
@@ -37,6 +40,8 @@ namespace Vox.Featrures.SuperState
         {
             if (!Ctrl.Grounded)
                 Ctrl.anim.SetBool("isGrounded", false);
+
+
         }
 
         protected override void UpdateState()

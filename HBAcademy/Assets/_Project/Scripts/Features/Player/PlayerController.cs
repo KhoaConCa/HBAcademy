@@ -112,35 +112,35 @@ namespace Vox.Features
 
         private void GetMove()
         {
-            float horizontalInput = Input.GetAxisRaw("Horizontal");
-            XInput = Mathf.Abs(horizontalInput) > 0.1f;
+            //float horizontalInput = Input.GetAxisRaw("Horizontal");
+            //XInput = Mathf.Abs(horizontalInput) > 0.1f;
 
-            if (XInput)
-                MoveDirection = Mathf.Sign(horizontalInput) > 0 ? 1 : -1;
+            //if (XInput)
+            //    MoveDirection = Mathf.Sign(horizontalInput) > 0 ? 1 : -1;
         }
 
         private void GetJump()
         {
-            IsJump = Input.GetKey(KeyCode.Space);
-            JumpTriggered = Input.GetKeyDown(KeyCode.Space);
+            //IsJump = Input.GetKey(KeyCode.Space);
+            //JumpTriggered = Input.GetKeyDown(KeyCode.Space);
         }
 
         private void Attack()
         {
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                IsAttack = true;
-                Debug.Log($"Attack: {IsAttack}");
-            }
+            //if (Input.GetKeyDown(KeyCode.C))
+            //{
+            //    IsAttack = true;
+            //    Debug.Log($"Attack: {IsAttack}");
+            //}
         }
 
         private void Throw()
         {
-            if (Input.GetKeyDown(KeyCode.V))
-            {
-                IsThrow = true;
-                Debug.Log($"Throw: {IsThrow}");
-            }
+            //if (Input.GetKeyDown(KeyCode.V))
+            //{
+            //    IsThrow = true;
+            //    Debug.Log($"Throw: {IsThrow}");
+            //}
         }
 
         #endregion
@@ -164,6 +164,7 @@ namespace Vox.Features
         public bool ThrowTriggered { get; private set; } = false;
 
         public bool Grounded { get; set; } = true;
+        public bool IsAbilityDone { get; set; }
         public bool XInput { get; set; }
         public bool YInput { get; set; }
         public bool JumpInput { get; set; }
@@ -180,6 +181,7 @@ namespace Vox.Features
         public PlayerStateFactory stateFactory;
         public BaseState<PlayerController, PlayerStateFactory> currentState;
         public PlayerData playerData;
+        public PlayerInputHandler inputHandler;
 
         #endregion
     }

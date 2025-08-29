@@ -6,6 +6,7 @@ using Vox.Featrures.SuperState;
 using Vox.Features;
 using Vox.Features.State;
 using Vox.Features.SubState;
+using Vox.Features.SuperState;
 using Vox.Ultilities.StateMachine;
 
 namespace Vox.Features
@@ -23,6 +24,9 @@ namespace Vox.Features
         public BaseState<PlayerController, PlayerStateFactory> GroundState() => new PlayerGroundedState(_controller, this, _data);
         public BaseState<PlayerController, PlayerStateFactory> IdleState() => new PlayerIdleState(_controller, this, _data);
         public BaseState<PlayerController, PlayerStateFactory> RunState() => new PlayerRunState(_controller, this, _data);
+        public BaseState<PlayerController, PlayerStateFactory> AbilityState() => new PlayerAbilityState(_controller, this, _data);
+        public BaseState<PlayerController, PlayerStateFactory> JumpState() => new PlayerJumpState(_controller, this, _data);
+        public BaseState<PlayerController, PlayerStateFactory> FallState() => new PlayerFallState(_controller, this, _data);
         //public BaseState<PlayerController, PlayerStateFactory> AirSuperState() => new AirSuperState(_controller, this);
         //public BaseState<PlayerController, PlayerStateFactory> IdleSubState() => new IdleSubState(_controller, this);
         //public BaseState<PlayerController, PlayerStateFactory> RunSubState() => new RunSubState(_controller, this);

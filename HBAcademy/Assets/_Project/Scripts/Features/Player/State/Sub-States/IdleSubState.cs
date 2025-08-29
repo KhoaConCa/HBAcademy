@@ -5,41 +5,52 @@ using Vox.Ultilities.StateMachine;
 
 namespace Vox.Features.State
 {
-    public class IdleSubState : BaseState<PlayerController, StateFactory>
-    {
-        public IdleSubState(PlayerController ctrl, StateFactory stateFac) : base(ctrl, stateFac)
-        {
-            EnterState();
-        }
+    //public class IdleSubState : BaseState<PlayerController, StateFactory>
+    //{
+    //    public IdleSubState(PlayerController ctrl, StateFactory stateFac) : base(ctrl, stateFac)
+    //    {
+    //        EnterState();
+    //    }
 
-        public override void EnterState()
-        {
-            Ctrl.anim.SetBool("isMove", false);
-        }
+    //    public override void EnterState()
+    //    {
+    //        Debug.Log("Idle");
+    //        Ctrl.anim.SetBool("isMove", false);
+    //        Ctrl.anim.SetTrigger("Idle");
+    //    }
 
-        protected override void UpdateState()
-        {
-            float moveSpeed = Mathf.Clamp(Mathf.Abs(Ctrl.rg2D.velocity.x), 0, 2);
-            if (moveSpeed > 0.01f)
-                Ctrl.rg2D.velocity = new Vector2(moveSpeed - acceleration, Ctrl.rg2D.velocity.y);
-        }
+    //    protected override void UpdateState()
+    //    {
+    //        float moveSpeed = Mathf.Clamp(Mathf.Abs(Ctrl.rg2D.velocity.x), 0, 2);
 
-        public override void ExitState()
-        {
-            if (CurrentSubState != null)
-                CurrentSubState.ExitState();
-        }
+    //        if (moveSpeed > 0.01f)
+    //        {
+    //            Ctrl.rg2D.velocity = new Vector2(moveSpeed - acceleration, Ctrl.rg2D.velocity.y);
+    //        }
+    //    }
 
-        protected override void CheckSwitchState()
-        {
-            if (Ctrl.IsMove)
-                SwitchState(Fac.RunSubState());
-        }
+    //    public override void ExitState()
+    //    {
+    //        if (CurrentSubState != null)
+    //            CurrentSubState.ExitState();
 
-        #region --- Fields ---
+    //        Ctrl.anim.ResetTrigger("Idle");
+    //    }
 
-        private float acceleration = 0.4f;
+    //    protected override void CheckSwitchState()
+    //    {
+    //        if (Ctrl.IsMove)
+    //            SwitchState(Fac.RunSubState());
+    //        else if (Ctrl.IsAttack)
+    //            SwitchState(Fac.AttackSubState());
+    //        else if (Ctrl.IsThrow)
+    //            SwitchState(Fac.ThrowSubState());
+    //    }
 
-        #endregion
-    }
+    //    #region --- Fields ---
+
+    //    private float acceleration = 0.4f;
+
+    //    #endregion
+    //}
 }

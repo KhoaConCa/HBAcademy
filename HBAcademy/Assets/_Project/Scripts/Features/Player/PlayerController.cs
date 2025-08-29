@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Vox.Ultilities.StateMachine;
 
@@ -72,16 +73,15 @@ namespace Vox.Features
     /// PlayerController - Controller and manage state.<br/>
     /// Developer: Dương Nhật Khoa, created on: 27/08/2025.
     /// </summary>
-    public class PlayerController : MonoBehaviour, IStateController<BaseState<PlayerController, StateFactory>>
+    public class PlayerController : MonoBehaviour, IStateController<BaseState<PlayerController, PlayerStateFactory>>
     {
-
         #region --- Unity Methods ---
 
         public void Start()
         {
-            stateFactory = new StateFactory(this); // Khởi tạo Factory.
+            stateFactory = new PlayerStateFactory(this, playerData);
 
-            currentState = stateFactory.GroundSuperState(); // Gán State khởi đầu.
+            currentState = stateFactory.GroundState();
             currentState.EnterState();
         }
 
@@ -89,52 +89,65 @@ namespace Vox.Features
         {
             GetMove();
             GetJump();
+            Attack();
+            Throw();
 
-            // Thực hiện cập nhật chuỗi các State.
             currentState?.UpdateChainStates();
         }
 
         public void FixedUpdate()
         {
-            CheckGround();
+            currentState?.PhysicsUpdate();
+            //CheckGround();
         }
 
         #endregion
 
         #region --- Methods ---
 
-        /// <summary>
-        /// Kiểm tra Player chạm đất.
-        /// </summary>
         private void CheckGround()
         {
             IsGrounded = col2D.Cast(Vector2.down, contactFilter2D, new RaycastHit2D[5], 0.05f) > 0;
         }
 
-        /// <summary>
-        /// Nhận tham số di chuyển của nhân vật.
-        /// </summary>
         private void GetMove()
         {
             float horizontalInput = Input.GetAxisRaw("Horizontal");
-            MoveDirection = Mathf.Sign(horizontalInput) > 0 ? 1 : -1;
-            IsMove = Mathf.Abs(horizontalInput) > 0.1f;
+            XInput = Mathf.Abs(horizontalInput) > 0.1f;
+
+            if (XInput)
+                MoveDirection = Mathf.Sign(horizontalInput) > 0 ? 1 : -1;
         }
 
-        /// <summary>
-        /// Set up jump parameters.
-        /// </summary>
         private void GetJump()
         {
-            IsJump = Input.GetKeyDown(KeyCode.Space);
+            IsJump = Input.GetKey(KeyCode.Space);
             JumpTriggered = Input.GetKeyDown(KeyCode.Space);
+        }
+
+        private void Attack()
+        {
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                IsAttack = true;
+                Debug.Log($"Attack: {IsAttack}");
+            }
+        }
+
+        private void Throw()
+        {
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                IsThrow = true;
+                Debug.Log($"Throw: {IsThrow}");
+            }
         }
 
         #endregion
 
         #region --- Properties ---
 
-        public BaseState<PlayerController, StateFactory> CurrentState
+        public BaseState<PlayerController, PlayerStateFactory> CurrentState
         {
             get { return currentState; }
             set { currentState = value; }
@@ -144,8 +157,16 @@ namespace Vox.Features
         public bool IsMove { get; private set; }
         public bool JumpTriggered { get; private set; } = false;
         public bool IsJump { get; private set; }
-        public bool IsDoubleJump { get; set; } = false;
         public bool IsGrounded { get; private set; }
+        public bool IsAttack { get; set; }
+        public bool IsThrow { get; set; }
+        public bool AttackTriggered { get; private set; } = false;
+        public bool ThrowTriggered { get; private set; } = false;
+
+        public bool Grounded { get; set; } = true;
+        public bool XInput { get; set; }
+        public bool YInput { get; set; }
+        public bool JumpInput { get; set; }
 
         #endregion
 
@@ -156,10 +177,10 @@ namespace Vox.Features
         public Animator anim;
         public ContactFilter2D contactFilter2D;
 
-        public StateFactory stateFactory;
-        public BaseState<PlayerController, StateFactory> currentState;
+        public PlayerStateFactory stateFactory;
+        public BaseState<PlayerController, PlayerStateFactory> currentState;
+        public PlayerData playerData;
 
         #endregion
-
     }
 }

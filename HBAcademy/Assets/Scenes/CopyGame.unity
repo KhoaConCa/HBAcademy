@@ -674,6 +674,7 @@ MonoBehaviour:
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
+  playerData: {fileID: 11400000, guid: fa68f03ba1d604c46a1aa2d60dae3f3f, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

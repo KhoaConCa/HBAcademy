@@ -1,60 +1,61 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vox.Featrures.SuperState;
 using Vox.Ultilities.StateMachine;
 
 namespace Vox.Features.SubState
 {
-    public class PlayerFallState : BaseState<PlayerController, PlayerStateFactory>
+    public class PlayerFallState : PlayerGroundedState // BaseState<PlayerController, PlayerStateFactory>
     {
-        public PlayerFallState(PlayerController ctrl, PlayerStateFactory fac, ScriptableObject data) : base(ctrl, fac, data)
+        public PlayerFallState(PlayerController ctrl, PlayerStateFactory fac, PlayerData data, string animTrigger) : base(ctrl, fac, data, animTrigger)
         {
         }
 
         public override void EnterState()
         {
-            Debug.Log("Fall");
             base.EnterState();
-
+            Debug.Log("Fall");
+            //base.EnterState();
             Ctrl.anim.SetBool("isFall", true);
+            Fac.AirState().ResetIsFalling();
+
+            //Ctrl.rg2D.velocity = new Vector2(Ctrl.rg2D.velocity.x, Ctrl.rg2D.velocity.y);
         }
 
         public override void ExitState()
         {
             Ctrl.anim.SetBool("isFall", false);
-            Ctrl.anim.SetFloat("velY", 0);
         }
 
         protected override void CheckSwitchState()
         {
             if (!isExitingState)
             {
-                if (Ctrl.inputHandler.NormalizedInputX != 0)
+                if (!_isGrounded && _xInput != 0)
                 {
-                    SwitchState(Fac.RunState());
+                    Ctrl.rg2D.velocity = new Vector2(_xInput, Ctrl.rg2D.velocity.y);
                 }
-                else if (Ctrl.Grounded && Ctrl.rg2D.velocity.y < 0.01f)
+                else if (isAnimationFinished)
                 {
                     SwitchState(Fac.IdleState());
                 }
+                else if (_isGrounded && Ctrl.inputHandler.NormalizedInputX != 0)
+                    SwitchState(Fac.RunState());
             }
         }
 
         protected override void UpdateState()
         {
-            Ctrl.anim.SetFloat("velY", Ctrl.rg2D.velocity.y);
-        }
+            Ctrl.anim.SetFloat("yVelocity", Ctrl.rg2D.velocity.y);
+            Ctrl.rg2D.velocity = new Vector2(Ctrl.playerData.moveSpeed * Ctrl.inputHandler.NormalizedInputX * Time.fixedDeltaTime
+                    , Ctrl.rg2D.velocity.y);
 
-        // Start is called before the first frame update
-        void Start()
-        {
+            if (Ctrl.inputHandler.NormalizedInputX != 0)
+                Ctrl.transform.rotation = Quaternion.Euler(new Vector3(0, Ctrl.inputHandler.NormalizedInputX >= 0 ? 0 : 180, 0));
 
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            if (_isGrounded)
+                isAnimationFinished = true;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Vox.Features.Character;
 using Vox.Features.Player.Data;
 using Vox.Ultilities.StateMachine;
 
@@ -9,7 +10,8 @@ namespace Vox.Features.Player
     /// PlayerController - Controller and manage state.<br/>
     /// Developer: Dương Nhật Khoa - created on: 27/08/2025.
     /// </summary>
-    public class PlayerController : MonoBehaviour, IStateController<BaseState<PlayerController, PlayerStateFactory>>
+    public class PlayerController : MonoBehaviour, IStateController<BaseState<PlayerController, PlayerStateFactory>>,
+        ICharacter, IDamageable
     {
         #region --- Unity Methods ---
 
@@ -56,9 +58,14 @@ namespace Vox.Features.Player
 
         #region --- Methods ---
 
+        #region -- ICharacter --
         public void OnInit()
         {
-            isDead = false;
+            DeactiveAttack();
+
+            playerData.maxHealth = 100;
+
+            IsDead = false;
 
             transform.position = _savePoint;
 
@@ -68,6 +75,35 @@ namespace Vox.Features.Player
             currentState.EnterState();
         }
 
+        public void OnDespawn()
+        {
+            OnInit();
+        }
+        #endregion
+
+        #region -- IDamageable --
+        public void TakeDamage(float damage)
+        {
+            if (!isDead)
+            {
+                playerData.maxHealth -= damage;
+
+                if (playerData.maxHealth <= 0)
+                    isDead = true;
+
+                if (isDead)
+                {
+                    Die();
+                }
+            }
+        }
+
+        public void Die()
+        {
+            Invoke(nameof(OnDespawn), 1f);
+        }
+        #endregion
+
         public void AnimationTrigger() => currentState.AnimationTrigger();
 
         public void AnimationFinishTrigger() => currentState.AnimationFinishTrigger();
@@ -75,6 +111,16 @@ namespace Vox.Features.Player
         public void SavePoint()
         {
             _savePoint = transform.position;
+        }
+
+        public void ActiveAttack()
+        {
+            attackArea.SetActive(true);
+        }
+
+        public void DeactiveAttack()
+        {
+            attackArea.SetActive(false);
         }
 
         #endregion
@@ -98,6 +144,10 @@ namespace Vox.Features.Player
         #endregion
 
         #region --- Fields ---
+
+        [SerializeField] public Kunai kunaiPrefab;
+        [SerializeField] public Transform throwPoint;
+        [SerializeField] public GameObject attackArea;
 
         public Rigidbody2D rg2D;
         public Collider2D col2D;

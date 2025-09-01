@@ -17,5 +17,8 @@ namespace Vox.Features.Player.Data
 
         [Header("In Air State")]
         public float coyoteTime = 0.2f;
+
+        [Header("Stats")]
+        public float maxHealth = 100;
     }
 }

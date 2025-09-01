@@ -21,6 +21,8 @@ namespace Vox.Features.SubState
             base.EnterState();
             Debug.Log("Throw");
             Ctrl.rg2D.velocity = new Vector2(0, Ctrl.rg2D.velocity.y);
+
+            UnityEngine.Object.Instantiate(Ctrl.kunaiPrefab, Ctrl.throwPoint.position, Ctrl.throwPoint.rotation);
         }
 
         public override void ExitState()

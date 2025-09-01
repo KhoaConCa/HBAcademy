@@ -24,13 +24,14 @@ namespace Vox.Features.SubState
         {
             base.EnterState();
             Debug.Log("Attack");
+            Ctrl.ActiveAttack();
             Ctrl.rg2D.velocity = new Vector2(0, Ctrl.rg2D.velocity.y);
         }
 
         public override void ExitState()
         {
             base.ExitState();
-
+            Ctrl.DeactiveAttack();
         }
 
         protected override void CheckSwitchState()

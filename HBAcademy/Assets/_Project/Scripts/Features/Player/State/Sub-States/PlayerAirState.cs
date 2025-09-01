@@ -1,21 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.SocialPlatforms.Impl;
-using UnityEngine.Windows;
-using Vox.Featrures.SuperState;
+﻿using UnityEngine;
+using Vox.Features.Player;
+using Vox.Features.Player.Data;
 using Vox.Ultilities.StateMachine;
 
 namespace Vox.Features.SubState
 {
+    /// <summary>
+    /// PlayerAirState - Super-state.<br/>
+    /// Developer: Duong Nhat Khoa - created on: 31/08/2025.
+    /// </summary>
     public class PlayerAirState : BaseState<PlayerController, PlayerStateFactory>
     {
-        public PlayerAirState(PlayerController ctrl, PlayerStateFactory stateFac, PlayerData data, string animBool) 
-            : base(ctrl, stateFac, data, animBool)
-        {
+        #region --- Constructor ---
 
-        }
+        public PlayerAirState(PlayerController ctrl, PlayerStateFactory stateFac, PlayerData data, string animBool) 
+            : base(ctrl, stateFac, data, animBool) { }
+
+        #endregion
+
+        #region --- Methods ---
 
         public override void EnterState()
         {
@@ -24,7 +27,7 @@ namespace Vox.Features.SubState
 
         public override void ExitState()
         {
-            //_isFalling = false;
+
         }
 
         protected override void CheckConditions()
@@ -34,39 +37,10 @@ namespace Vox.Features.SubState
 
         protected override void CheckSwitchState()
         {
-            if (!_isGrounded)
+            if (!_isGrounded && _isFalling)
             {
-                if (_isFalling)
-                    SwitchState(Fac.FallState());
+                SwitchState(Fac.FallState());
             }
-
-            //if (!_isGrounded && Ctrl.rg2D.velocity.y < 0.01f)
-            //{
-            //    //Debug.Log("Land");
-            //    SwitchState(Fac.FallState());
-            //}
-            //else
-            //{
-            //    Ctrl.rg2D.velocity = new Vector2(Ctrl.playerData.moveSpeed * _xInput * Time.fixedDeltaTime
-            //                                , Ctrl.rg2D.velocity.y);
-            //    Ctrl.transform.rotation = Quaternion.Euler(new Vector3(0, _xInput >= 0 ? 0 : 180, 0));
-            //}
-            //if (_isGrounded && Ctrl.rg2D.velocity.y < 0.01f)
-            //{
-            //    SwitchState(Fac.FallState());
-            //}
-            ////else if (jumpInput && player.JumpState.CanJump())
-            ////{
-            ////    stateMachine.ChangeState(player.JumpState);
-            ////}
-            //else
-            //{
-            //    core.Movement.CheckIfShouldFlip(xInput);
-            //    core.Movement.SetVelocityX(playerData.movementVelocity * xInput);
-
-            //    player.Anim.SetFloat("yVelocity", core.Movement.CurrentVelocity.y);
-            //    player.Anim.SetFloat("xVelocity", Mathf.Abs(core.Movement.CurrentVelocity.x));
-            //}
         }
 
         protected override void UpdateState()
@@ -78,7 +52,6 @@ namespace Vox.Features.SubState
             _jumpInputStop = Ctrl.inputHandler.JumpInputStop;
 
             Ctrl.anim.SetFloat("yVelocity", Ctrl.rg2D.velocity.y);
-            //Ctrl.anim.SetFloat("xVelocity", Mathf.Abs(Ctrl.rg2D.velocity.x));
 
             Ctrl.rg2D.velocity = new Vector2(Ctrl.playerData.moveSpeed * _xInput * Time.fixedDeltaTime
                                             , Ctrl.rg2D.velocity.y);
@@ -86,42 +59,28 @@ namespace Vox.Features.SubState
 
             if (Ctrl.rg2D.velocity.y < 0.01f)
                 _isFalling = true;
-            //_xInput = Ctrl.inputHandler.NormalizedInputX;
-            //_jumpInput = Ctrl.inputHandler.JumpInput;
-            //_jumpInputStop = Ctrl.inputHandler.JumpInputStop;
-
-            //CheckJumpMultiplier();
         }
 
-        //private void CheckJumpMultiplier()
-        //{
-        //    if (_isJumping)
-        //    {
-        //        if (_jumpInputStop)
-        //        {
-        //            core.Movement.SetVelocityY(core.Movement.CurrentVelocity.y * playerData.variableJumpHeightMultiplier);
-        //            _isJumping = false;
-        //        }
-        //        else if (core.Movement.CurrentVelocity.y <= 0f)
-        //        {
-        //            _isJumping = false;
-        //        }
-
-        //    }
-        //}
-
+        /// <summary>
+        /// Allow player can still jump for a short time after leaving the ground.
+        /// </summary>
         private void CheckCoyoteTime()
         {
             if (_coyoteTime && Time.time > startTime + Ctrl.playerData.coyoteTime)
             {
                 _coyoteTime = false;
-                Fac.JumpState().DecreaseAmountOfJumpsLeft();
             }
         }
 
         public void StartCoyoteTime() => _coyoteTime = true;
+
         public void SetIsJumping() => _isJumping = true;
+
         public void ResetIsFalling() => _isFalling = false;
+
+        #endregion
+
+        #region --- Fields ---
 
         private int _xInput;
         private bool _jumpInput;
@@ -132,5 +91,7 @@ namespace Vox.Features.SubState
         private bool _isGrounded;
         private bool _isJumping;
         private bool _isFalling;
+
+        #endregion
     }
 }

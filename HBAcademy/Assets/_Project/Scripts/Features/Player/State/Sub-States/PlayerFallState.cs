@@ -1,26 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Vox.Featrures.SuperState;
-using Vox.Ultilities.StateMachine;
+using Vox.Features.Player;
+using Vox.Features.Player.Data;
 
 namespace Vox.Features.SubState
 {
-    public class PlayerFallState : PlayerGroundedState // BaseState<PlayerController, PlayerStateFactory>
+    /// <summary>
+    /// PlayerFallState - Sub-state.<br/>
+    /// Developer: Duong Nhat Khoa - created on: 31/08/2025.
+    /// </summary>
+    public class PlayerFallState : PlayerGroundedState
     {
-        public PlayerFallState(PlayerController ctrl, PlayerStateFactory fac, PlayerData data, string animTrigger) : base(ctrl, fac, data, animTrigger)
-        {
-        }
+        #region --- Constructor ---
+
+        public PlayerFallState(PlayerController ctrl, PlayerStateFactory fac, PlayerData data, string animTrigger) 
+            : base(ctrl, fac, data, animTrigger) { }
+
+        #endregion
+
+        #region --- Methods ---
 
         public override void EnterState()
         {
             base.EnterState();
             Debug.Log("Fall");
-            //base.EnterState();
+
             Ctrl.anim.SetBool("isFall", true);
             Fac.AirState().ResetIsFalling();
-
-            //Ctrl.rg2D.velocity = new Vector2(Ctrl.rg2D.velocity.x, Ctrl.rg2D.velocity.y);
         }
 
         public override void ExitState()
@@ -30,6 +36,7 @@ namespace Vox.Features.SubState
 
         protected override void CheckSwitchState()
         {
+            Debug.Log(Ctrl.IsDead);
             if (!isExitingState)
             {
                 if (!_isGrounded && _xInput != 0)
@@ -41,7 +48,13 @@ namespace Vox.Features.SubState
                     SwitchState(Fac.IdleState());
                 }
                 else if (_isGrounded && Ctrl.inputHandler.NormalizedInputX != 0)
+                {
                     SwitchState(Fac.RunState());
+                }
+                else if (Ctrl.IsDead)
+                {
+                    SwitchState(Fac.DeathState());
+                }
             }
         }
 
@@ -57,5 +70,7 @@ namespace Vox.Features.SubState
             if (_isGrounded)
                 isAnimationFinished = true;
         }
+
+        #endregion
     }
 }

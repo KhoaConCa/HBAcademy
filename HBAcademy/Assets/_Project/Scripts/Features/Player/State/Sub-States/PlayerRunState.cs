@@ -2,33 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Vox.Featrures.SuperState;
+using Vox.Features.Player;
+using Vox.Features.Player.Data;
 using Vox.Ultilities.StateMachine;
 
 namespace Vox.Features.SubState
 {
-    public class PlayerRunState : PlayerGroundedState //BaseState<PlayerController, PlayerStateFactory>
+    public class PlayerRunState : PlayerGroundedState
     {
+        #region --- Constructor ---
+
         public PlayerRunState(PlayerController ctrl, PlayerStateFactory fac, PlayerData data, string animTrigger) 
             : base(ctrl, fac, data, animTrigger) { }
+
+        #endregion
+
+        #region --- Methods ---
 
         public override void EnterState()
         {
             base.EnterState();
 
             Debug.Log("Run");
-            //Ctrl.anim.SetBool("isMove", true);
-            //Ctrl.anim.SetTrigger("Run");
         }
 
         public override void ExitState()
         {
             base.ExitState();
-
-            //if (CurrentSubState != null)
-            //    CurrentSubState.ExitState();
-
-            //Ctrl.anim.SetBool("isMove", false);
-            //Ctrl.anim.ResetTrigger("Run");
         }
 
         protected override void CheckSwitchState()
@@ -38,19 +38,11 @@ namespace Vox.Features.SubState
             if (!isExitingState && _xInput == 0)
             {
                 SwitchState(Fac.IdleState());
-
-                //Ctrl.anim.SetBool("isMove", false);
             }
             else if (!_isGrounded && _xInput != 0)
             {
-                //Ctrl.anim.SetBool("isMove", false);
                 SwitchState(Fac.FallState());
             }
-            //else if (Ctrl.inputHandler.JumpInput)
-            //{
-            //    //Ctrl.anim.SetBool("isMove", false);
-            //    //SwitchState(Fac.JumpState());
-            //}
         }
 
         protected override void UpdateState()
@@ -67,5 +59,7 @@ namespace Vox.Features.SubState
             if (_xInput != 0)
                 Ctrl.transform.rotation = Quaternion.Euler(new Vector3(0, _xInput >= 0 ? 0 : 180, 0));
         }
+
+        #endregion
     }
 }

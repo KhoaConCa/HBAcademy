@@ -1,14 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Vox.Features.Player;
+using Vox.Features.Player.Data;
 using Vox.Features.SuperState;
 
 namespace Vox.Features.SubState
 {
-    public class PlayerThrowState : PlayerAbilityState //: BaseState<PlayerController, PlayerStateFactory>
+    public class PlayerThrowState : PlayerAbilityState
     {
+        #region --- Constructor ---
+
         public PlayerThrowState(PlayerController ctrl, PlayerStateFactory stateFac, PlayerData data, string animTrigger)
             : base(ctrl, stateFac, data, animTrigger) { }
+
+        #endregion
+
+        #region --- Methods ---
 
         public override void EnterState()
         {
@@ -43,5 +49,7 @@ namespace Vox.Features.SubState
 
             _isAbilityDone = true;
         }
+
+        #endregion
     }
 }

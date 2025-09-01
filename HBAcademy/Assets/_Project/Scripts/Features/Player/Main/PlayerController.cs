@@ -1,14 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+﻿using System;
 using UnityEngine;
+using Vox.Features.Player.Data;
 using Vox.Ultilities.StateMachine;
 
-namespace Vox.Features
+namespace Vox.Features.Player
 {
     /// <summary>
     /// PlayerController - Controller and manage state.<br/>
-    /// Developer: Dương Nhật Khoa, created on: 27/08/2025.
+    /// Developer: Dương Nhật Khoa - created on: 27/08/2025.
     /// </summary>
     public class PlayerController : MonoBehaviour, IStateController<BaseState<PlayerController, PlayerStateFactory>>
     {
@@ -18,37 +17,38 @@ namespace Vox.Features
         {
             contactFilter2D.useLayerMask = true;
             contactFilter2D.layerMask = LayerMask.GetMask("Ground");
+
+            SavePoint();
         }
+
         public void Start()
         {
-            stateFactory = new PlayerStateFactory(this, playerData);
-
-            currentState = stateFactory.IdleState();
-            currentState.EnterState();
+            OnInit();
         }
 
         public void Update()
         {
-            GetMove();
-            GetJump();
-            Attack();
-            Throw();
-
-            //Debug.Log(currentState);
             currentState?.UpdateChainStates();
         }
 
         public void FixedUpdate()
         {
             currentState?.PhysicsUpdate();
-            //CheckGround();
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.tag == "Coin")
             {
-                Debug.Log("Coin collected!");
+                Destroy(collision.gameObject);
+                _coin++;
+            }
+            
+            if (collision.tag == "DeathZone")
+            {
+                isDead = true;
+
+                Invoke(nameof(OnInit), 1f);
             }
         }
 
@@ -56,42 +56,25 @@ namespace Vox.Features
 
         #region --- Methods ---
 
-        private void CheckGround()
+        public void OnInit()
         {
-            IsGrounded = col2D.Cast(Vector2.down, contactFilter2D, new RaycastHit2D[5], 0.05f) > 0;
+            isDead = false;
+
+            transform.position = _savePoint;
+
+            stateFactory = new PlayerStateFactory(this, playerData);
+
+            currentState = stateFactory.IdleState();
+            currentState.EnterState();
         }
 
-        private void GetMove()
-        {
-            //float horizontalInput = Input.GetAxisRaw("Horizontal");
-            //XInput = Mathf.Abs(horizontalInput) > 0.1f;
+        public void AnimationTrigger() => currentState.AnimationTrigger();
 
-            //if (XInput)
-            //    MoveDirection = Mathf.Sign(horizontalInput) > 0 ? 1 : -1;
-        }
+        public void AnimationFinishTrigger() => currentState.AnimationFinishTrigger();
 
-        private void GetJump()
+        public void SavePoint()
         {
-            //IsJump = Input.GetKey(KeyCode.Space);
-            //JumpTriggered = Input.GetKeyDown(KeyCode.Space);
-        }
-
-        private void Attack()
-        {
-            //if (Input.GetKeyDown(KeyCode.C))
-            //{
-            //    IsAttack = true;
-            //    Debug.Log($"Attack: {IsAttack}");
-            //}
-        }
-
-        private void Throw()
-        {
-            //if (Input.GetKeyDown(KeyCode.V))
-            //{
-            //    IsThrow = true;
-            //    Debug.Log($"Throw: {IsThrow}");
-            //}
+            _savePoint = transform.position;
         }
 
         #endregion
@@ -106,23 +89,11 @@ namespace Vox.Features
 
         public Animator Anim => anim;
 
-        public float MoveDirection { get; private set; }
-        public bool IsMove { get; private set; }
-        public bool JumpTriggered { get; private set; } = false;
-        public bool IsJump { get; private set; }
-        public bool IsGrounded { get; private set; }
-        public bool IsAttack { get; set; }
-        public bool IsThrow { get; set; }
-        public bool AttackTriggered { get; private set; } = false;
-        public bool ThrowTriggered { get; private set; } = false;
-
-        public bool Grounded { get; set; } = true;
-        public bool IsAbilityDone { get; set; }
-        public bool XInput { get; set; }
-        public bool YInput { get; set; }
-        public bool JumpInput { get; set; }
-        public void AnimationTrigger() => currentState.AnimationTrigger();
-        public void AnimationFinishTrigger() => currentState.AnimationFinishTrigger();
+        public bool IsDead
+        {
+            get { return isDead; }
+            set { isDead = value; }
+        }
 
         #endregion
 
@@ -137,6 +108,11 @@ namespace Vox.Features
         public BaseState<PlayerController, PlayerStateFactory> currentState;
         public PlayerData playerData;
         public PlayerInputHandler inputHandler;
+
+        private int _coin = 0;
+        private Vector3 _savePoint;
+
+        public bool isDead = false;
 
         #endregion
     }

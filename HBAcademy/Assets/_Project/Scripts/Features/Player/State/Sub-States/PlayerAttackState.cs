@@ -1,14 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Vox.Features.Player;
+using Vox.Features.Player.Data;
 using Vox.Features.SuperState;
 
 namespace Vox.Features.SubState
 {
-    public class PlayerAttackState : PlayerAbilityState //: BaseState<PlayerController, PlayerStateFactory>
+    /// <summary>
+    /// PlayerAttackState - Sub-state.<br/>
+    /// Developer: Duong Nhat Khoa - created on: 01/09/2025.
+    /// </summary>
+    public class PlayerAttackState : PlayerAbilityState
     {
+        #region --- Constructor ---
+
         public PlayerAttackState(PlayerController ctrl, PlayerStateFactory stateFac, PlayerData data, string animTrigger) 
             : base(ctrl, stateFac, data, animTrigger) { }
+
+        #endregion
+
+        #region --- Methods ---
 
         public override void EnterState()
         {
@@ -43,5 +53,7 @@ namespace Vox.Features.SubState
 
             _isAbilityDone = true;
         }
+
+        #endregion
     }
 }

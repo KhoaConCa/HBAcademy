@@ -3,19 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Vox.Features
+namespace Vox.Features.Player
 {
+    /// <summary>
+    /// PlayerInputHandler - Handles player input using the new Input System.<br/>
+    /// Developer: Duong Nhat Khoa - created on: 31/08/2025.
+    /// </summary>
     public class PlayerInputHandler : MonoBehaviour
     {
+        #region --- Unity Methods ---
+
+        private void Update()
+        {
+            CheckJumpInputHoldTime();
+        }
+
+        #endregion
+        #region --- Methods ---
+
         public void OnMoveInput(InputAction.CallbackContext context)
         {
             RawMovementInput = context.ReadValue<Vector2>();
 
             NormalizedInputX = Mathf.RoundToInt(RawMovementInput.x);
             NormalizedInputY = Mathf.RoundToInt(RawMovementInput.y);
-
-            //Debug.Log($"Normalized Input X: {NormalizedInputX}, Y: {NormalizedInputY}");
-            //Debug.Log($"Move Input: {RawMovementInput}");
         }
 
         public void OnJumpInput(InputAction.CallbackContext context)
@@ -25,16 +36,12 @@ namespace Vox.Features
                 JumpInput = true;
                 JumpInputStop = false;
                 _jumpInputStartTime = Time.time;
-                //Debug.Log("Jump pushed down now");
             }
 
             if (context.canceled)
             {
                 JumpInputStop = true;
-                //Debug.Log("Jump released now");
             }
-
-            //Debug.Log("Jump");
         }
 
         public void OnAttackInput(InputAction.CallbackContext context)
@@ -42,14 +49,11 @@ namespace Vox.Features
             if (context.started)
             {
                 AttackInput = true;
-                //Debug.Log("Attack pushed down now");
             }
             if (context.canceled)
             {
                 AttackInput = false;
-                //Debug.Log("Attack released now");
             }
-            //Debug.Log("Attack");
         }
 
         public void OnThrowInput(InputAction.CallbackContext context)
@@ -57,14 +61,11 @@ namespace Vox.Features
             if (context.started)
             {
                 ThrowInput = true;
-                //Debug.Log("Throw pushed down now");
             }
             if (context.canceled)
             {
                 ThrowInput = false;
-                //Debug.Log("Throw released now");
             }
-            //Debug.Log("Throw");
         }
 
         public void UseJumpInput() => JumpInput = false;
@@ -75,6 +76,10 @@ namespace Vox.Features
                 JumpInput = false;
         }
 
+        #endregion
+
+        #region --- Properties ---
+
         public Vector2 RawMovementInput { get; private set; }
         public int NormalizedInputX { get; private set; }
         public int NormalizedInputY { get; private set; }
@@ -83,9 +88,15 @@ namespace Vox.Features
         public bool AttackInput { get; private set; }
         public bool ThrowInput { get; private set; }
 
+        #endregion
+
+        #region --- Fields ---
+
         [SerializeField] private float _inputHoldTime = 0.2f;
         [SerializeField] private PlayerInput _playerInput;
 
         private float _jumpInputStartTime;
+
+        #endregion
     }
 }

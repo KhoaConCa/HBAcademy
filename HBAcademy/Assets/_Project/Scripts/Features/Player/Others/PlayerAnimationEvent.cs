@@ -1,12 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Vox.Ultilities.StateMachine;
+﻿using UnityEngine;
 
-namespace Vox.Features
+namespace Vox.Features.Player
 {
+    /// <summary>
+    /// PlayerAnimationEvent - Handle animation events for the player.<br/>
+    /// Developer: Duong Nhat Khoa - created on: 31/08/2025.
+    /// </summary>
     public class PlayerAnimationEvent : MonoBehaviour
     {
+        #region --- Methods ---
+
         public void AnimationTrigger()
         {
             if (_playerController != null)
@@ -19,6 +22,12 @@ namespace Vox.Features
                 _playerController.AnimationFinishTrigger();
         }
 
+        #endregion
+
+        #region --- Fields ---
+
         [SerializeField] private PlayerController _playerController;
+
+        #endregion
     }
 }

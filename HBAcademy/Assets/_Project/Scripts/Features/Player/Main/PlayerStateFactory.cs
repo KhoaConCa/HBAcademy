@@ -1,17 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.IO.LowLevel.Unsafe;
-using UnityEngine;
-using Vox.Featrures.SuperState;
-using Vox.Features;
+﻿using Vox.Featrures.SuperState;
+using Vox.Features.Player.Data;
 using Vox.Features.SubState;
 using Vox.Features.SuperState;
-using Vox.Ultilities.StateMachine;
 
-namespace Vox.Features
+namespace Vox.Features.Player
 {
+    /// <summary>
+    /// PlayerStateFactory - Factory to create and manage player states.<br/>
+    /// Developer: Duong Nhat Khoa - created on: 31/08/2025.
+    /// </summary>
     public class PlayerStateFactory
     {
+        #region --- Constructor ---
+
         public PlayerStateFactory(PlayerController ctrl, PlayerData data)
         {
             _controller = ctrl;
@@ -27,25 +28,13 @@ namespace Vox.Features
             _jumpState = new PlayerJumpState(ctrl, this, data, "Jump");
 
             _airState = new PlayerAirState(ctrl, this, data, "Air");
+
+            _deathState = new PlayerDeathState(ctrl, this, data, "Die");
         }
 
+        #endregion
+
         #region --- Methods ---
-
-        //public BaseState<PlayerController, PlayerStateFactory> GroundState() => new PlayerGroundedState(_controller, this, _data, "isGrounded");
-        //public BaseState<PlayerController, PlayerStateFactory> IdleState() => new PlayerIdleState(_controller, this, _data, "Idle");
-        //public BaseState<PlayerController, PlayerStateFactory> RunState() => new PlayerRunState(_controller, this, _data, "Run");
-        //public BaseState<PlayerController, PlayerStateFactory> AirState() => new PlayerAirState(_controller, this, _data, "Attack");
-        //public BaseState<PlayerController, PlayerStateFactory> AbilityState() => new PlayerAbilityState(_controller, this, _data);
-        //public BaseState<PlayerController, PlayerStateFactory> JumpState() => new PlayerJumpState(_controller, this, _data, "Jump");
-        //public BaseState<PlayerController, PlayerStateFactory> FallState() => new PlayerFallState(_controller, this, _data, "isFall");
-        //public BaseState<PlayerController, PlayerStateFactory> AirSuperState() => new AirSuperState(_controller, this);
-        //public BaseState<PlayerController, PlayerStateFactory> IdleSubState() => new IdleSubState(_controller, this);
-        //public BaseState<PlayerController, PlayerStateFactory> RunSubState() => new RunSubState(_controller, this);
-        //public BaseState<PlayerController, PlayerStateFactory> JumpSuperState() => new JumpSuperState(_controller, this);
-        //public BaseState<PlayerController, PlayerStateFactory> FallSubState() => new FallSubState(_controller, this);
-        //public BaseState<PlayerController, PlayerStateFactory> AttackSubState() => new AttackSubState(_controller, this);
-        //public BaseState<PlayerController, PlayerStateFactory> ThrowSubState() => new ThrowSubState(_controller, this);
-
         public PlayerGroundedState GroundedState() => _groundedState;
         public PlayerIdleState IdleState() => _idleState;
         public PlayerRunState RunState() => _runState;
@@ -54,6 +43,8 @@ namespace Vox.Features
         public PlayerFallState FallState() => _fallState;
         public PlayerAttackState AttackState() => _attackState;
         public PlayerThrowState ThrowState() => _throwState;
+
+        public PlayerDeathState DeathState() => _deathState;
 
         #endregion
 
@@ -70,6 +61,7 @@ namespace Vox.Features
         private PlayerFallState _fallState;
         private PlayerAttackState _attackState;
         private PlayerThrowState _throwState;
+        private PlayerDeathState _deathState;
 
         #endregion
 

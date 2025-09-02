@@ -70,7 +70,6 @@ namespace Vox.Ultilities.DesignPatterns.Singleton
             if (_instance == this) _instance = null;
         }
 
-
         #endregion
 
         #region --- Fields ---

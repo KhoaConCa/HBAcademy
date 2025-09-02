@@ -22,7 +22,7 @@ namespace Vox.Features.Enemy
 
         void Update()
         {
-            if (_currentState != null)
+            if (_currentState != null && !IsDead)
             {
                 _currentState.OnExecute(this);
             }
@@ -42,6 +42,7 @@ namespace Vox.Features.Enemy
         public void OnInit()
         {
             _health = 100;
+            healthBar.OnInit(100, transform);
 
             DeactiveAttack();
 
@@ -50,6 +51,7 @@ namespace Vox.Features.Enemy
 
         public void OnDespawn()
         {
+            Destroy(healthBar);
             Destroy(gameObject);
         }
         #endregion
@@ -142,8 +144,12 @@ namespace Vox.Features.Enemy
 
                 if (IsDead)
                 {
+                    _health = 0;
                     Die();
                 }
+
+                healthBar.SetNewHP(_health);
+                Instantiate(attackText, transform.position + Vector3.up, Quaternion.identity).OnInit(damage);
             }
         }
 
@@ -179,6 +185,8 @@ namespace Vox.Features.Enemy
         [SerializeField] private Rigidbody2D _rg2D;
         [SerializeField] private Animator _animator;
         [SerializeField] public GameObject attackArea;
+        [SerializeField] private HealthBar healthBar;
+        [SerializeField] private CombatText attackText;
 
         private IEnemyState _currentState;
         private PlayerController _target;

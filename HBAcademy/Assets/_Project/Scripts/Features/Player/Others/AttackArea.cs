@@ -10,11 +10,11 @@ public class AttackArea : MonoBehaviour
     {
         if (collision.tag == "Enemy")
         {
-            collision.GetComponent<EnemyController>().TakeDamage(100f);
+            collision.GetComponent<EnemyController>().TakeDamage(20f);
         }
         else if (collision.tag == "Player")
         {
-            collision.GetComponent<PlayerController>().TakeDamage(50f);
+            collision.GetComponent<PlayerController>().TakeDamage(20f);
         }
     }
 }

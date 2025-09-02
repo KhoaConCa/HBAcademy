@@ -6,6 +6,7 @@ using Vox.Features.Enemy;
 public class Kunai : MonoBehaviour
 {
     public Rigidbody2D rg;
+    public GameObject hitVFX;
 
     void Start()
     {
@@ -27,7 +28,8 @@ public class Kunai : MonoBehaviour
     {
         if (collision.tag == "Enemy")
         {
-            collision.GetComponent<EnemyController>().TakeDamage(100f);
+            collision.GetComponent<EnemyController>().TakeDamage(20f);
+            Instantiate(hitVFX, transform.position, transform.rotation);
             OnDespawn();
         }
     }

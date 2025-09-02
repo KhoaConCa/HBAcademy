@@ -25,6 +25,7 @@ namespace Vox.Features.Player
 
         public void Start()
         {
+            _coin = PlayerPrefs.GetInt("coin", 0);
             OnInit();
         }
 
@@ -35,6 +36,7 @@ namespace Vox.Features.Player
 
         public void FixedUpdate()
         {
+            if (IsDead) return;
             currentState?.PhysicsUpdate();
         }
 
@@ -44,12 +46,13 @@ namespace Vox.Features.Player
             {
                 Destroy(collision.gameObject);
                 _coin++;
+                PlayerPrefs.SetInt("coin", _coin);
+                UIManager.Instance.SetCoin(_coin);
             }
             
             if (collision.tag == "DeathZone")
             {
-                isDead = true;
-
+                playerData.maxHealth = 0;
                 Invoke(nameof(OnInit), 1f);
             }
         }
@@ -64,12 +67,14 @@ namespace Vox.Features.Player
             DeactiveAttack();
 
             playerData.maxHealth = 100;
+            healthBar.OnInit(100, transform);
 
-            IsDead = false;
+            isDead = false;
 
             transform.position = _savePoint;
 
             stateFactory = new PlayerStateFactory(this, playerData);
+            UIManager.Instance.SetCoin(_coin);
 
             currentState = stateFactory.IdleState();
             currentState.EnterState();
@@ -93,8 +98,12 @@ namespace Vox.Features.Player
 
                 if (isDead)
                 {
+                    playerData.maxHealth = 0;
                     Die();
                 }
+
+                healthBar.SetNewHP(playerData.maxHealth);
+                Instantiate(conbatTextPrefab, transform.position + Vector3.up, Quaternion.identity).OnInit(damage);
             }
         }
 
@@ -123,6 +132,46 @@ namespace Vox.Features.Player
             attackArea.SetActive(false);
         }
 
+        public void SetMove(int xInput)
+        {
+            if (xInput == 1)
+            {
+                inputHandler.NormalizedInputX = 1;
+                CurrentState = stateFactory.RunState();
+                CurrentState.EnterState();
+            }
+            else if (xInput == -1)
+            {
+                inputHandler.NormalizedInputX = -1;
+                CurrentState = stateFactory.RunState();
+                CurrentState.EnterState();
+            }
+            else if (xInput == 0)
+            {
+                inputHandler.NormalizedInputX = 0;
+                CurrentState = stateFactory.IdleState();
+                CurrentState.EnterState();
+            }
+        }
+
+        public void Attack()
+        {
+            CurrentState = stateFactory.AttackState();
+            CurrentState.EnterState();
+        }
+
+        public void Jump()
+        {
+            CurrentState = stateFactory.JumpState();
+            CurrentState.EnterState();
+        }
+
+        public void Throw()
+        {
+            CurrentState = stateFactory.ThrowState();
+            CurrentState.EnterState();
+        }
+
         #endregion
 
         #region --- Properties ---
@@ -135,11 +184,7 @@ namespace Vox.Features.Player
 
         public Animator Anim => anim;
 
-        public bool IsDead
-        {
-            get { return isDead; }
-            set { isDead = value; }
-        }
+        public bool IsDead => playerData.maxHealth <= 0;
 
         #endregion
 
@@ -148,6 +193,8 @@ namespace Vox.Features.Player
         [SerializeField] public Kunai kunaiPrefab;
         [SerializeField] public Transform throwPoint;
         [SerializeField] public GameObject attackArea;
+        [SerializeField] private HealthBar healthBar;
+        [SerializeField] private CombatText conbatTextPrefab;
 
         public Rigidbody2D rg2D;
         public Collider2D col2D;

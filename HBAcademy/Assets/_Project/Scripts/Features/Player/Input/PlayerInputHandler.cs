@@ -81,7 +81,7 @@ namespace Vox.Features.Player
         #region --- Properties ---
 
         public Vector2 RawMovementInput { get; private set; }
-        public int NormalizedInputX { get; private set; }
+        public int NormalizedInputX { get; set; }
         public int NormalizedInputY { get; private set; }
         public bool JumpInput { get; private set; }
         public bool JumpInputStop { get; private set; }
